@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
+
+import '../theme/theme_provider.dart';
 
 class ToDoTile extends StatelessWidget {
-  final String taskName;
-  final bool taskCompleted;
+  final String task;
+  final bool check;
   Function(bool?)? onChanged;
   Function(BuildContext)? delete;
 
   ToDoTile({
     super.key,
-    required this.taskName,
-    required this.taskCompleted,
+    required this.task,
+    required this.check,
     required this.onChanged,
     required this.delete,
   });
@@ -18,41 +21,41 @@ class ToDoTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 15.0, right: 15.0, top: 10.0),
+      padding: const EdgeInsets.only(right: 10.0, left: 10.0, top: 5),
       child: Slidable(
         endActionPane: ActionPane(
-          motion: StretchMotion(),
+          motion: ScrollMotion(),
           children: [
             SlidableAction(
+              // An action can be bigger than the others.
+              borderRadius: BorderRadius.circular(12),
+              // flex: 2,
               onPressed: delete,
               backgroundColor: Colors.red,
-              borderRadius: BorderRadius.circular(12.0),
+              foregroundColor: Colors.white,
               icon: Icons.delete_outline,
+              label: 'Delete',
             ),
           ],
         ),
         child: Container(
-          padding: EdgeInsets.all(24.0),
+          height: 80,
+          padding: EdgeInsets.all(15.0),
           decoration: BoxDecoration(
-            color: Colors.orange,
-            borderRadius: BorderRadius.circular(12.0),
+            color: Theme.of(context).primaryColor,
+            borderRadius: BorderRadius.circular(12),
           ),
           child: Row(
             children: [
-              Checkbox(
-                activeColor: Colors.orange,
-                checkColor: Colors.black,
-                value: taskCompleted,
-                onChanged: onChanged,
-              ),
-              Text(
-                taskName,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w700,
-                  decoration: taskCompleted ? TextDecoration.lineThrough : TextDecoration.none,
+              Consumer<ThemeProvider>(
+                builder: (context, value, child) => Checkbox(
+                  activeColor: Colors.transparent,
+                  checkColor: value.dark? Colors.white: Colors.black,
+                  value: check,
+                  onChanged: onChanged,
                 ),
               ),
+              Text(task, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500,decoration: check? TextDecoration.lineThrough:TextDecoration.none)),
             ],
           ),
         ),
